@@ -182,6 +182,8 @@ export interface Despatch {
 }
 
 export interface DashboardStats {
+  is_superadmin?: boolean;
+  role?: string;
   companies: {
     total: number;
     active: number;
@@ -204,6 +206,10 @@ export interface DashboardStats {
   users: {
     total: number;
     developers: number;
+  };
+  api_keys?: {
+    total: number;
+    active: number;
   };
   recent_documents: Document[];
   recent_companies: Company[];

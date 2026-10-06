@@ -19,6 +19,7 @@ import {
   Clock,
   Coins,
   FileText,
+  Key,
   Plus,
   RefreshCw,
   Settings,
@@ -89,11 +90,14 @@ export function DashboardPage() {
             c="gray.9"
             style={{ letterSpacing: "-0.4px" }}
           >
-            Panel de Administración Factos
+            {isSuperAdmin
+              ? "Panel de Administración Factos"
+              : "Panel de Desarrollador Factos"}
           </Title>
           <Text size="sm" c="dimmed">
-            Visión global del sistema gestor privado, emisores y comprobantes
-            SUNAT
+            {isSuperAdmin
+              ? "Visión global del sistema gestor privado, emisores y comprobantes SUNAT"
+              : "Métricas de tus empresas emisoras, comprobantes electrónicos y API Keys"}
           </Text>
         </Box>
 
@@ -108,26 +112,35 @@ export function DashboardPage() {
             Actualizar
           </Button>
 
-          {isSuperAdmin && (
-            <>
-              <Button
-                leftSection={<Plus size={16} />}
-                color="teal"
-                size="sm"
-                onClick={() => navigate("/companies?action=new")}
-              >
-                Nueva Empresa
-              </Button>
-              <Button
-                leftSection={<Settings size={16} />}
-                variant="light"
-                color="gray"
-                size="sm"
-                onClick={() => navigate("/settings")}
-              >
-                Configuración
-              </Button>
-            </>
+          <Button
+            leftSection={<Plus size={16} />}
+            color="teal"
+            size="sm"
+            onClick={() => navigate("/companies?action=new")}
+          >
+            Nueva Empresa
+          </Button>
+
+          {isSuperAdmin ? (
+            <Button
+              leftSection={<Settings size={16} />}
+              variant="light"
+              color="gray"
+              size="sm"
+              onClick={() => navigate("/settings")}
+            >
+              Configuración
+            </Button>
+          ) : (
+            <Button
+              leftSection={<Key size={16} />}
+              variant="light"
+              color="violet"
+              size="sm"
+              onClick={() => navigate("/api-keys")}
+            >
+              Mis API Keys
+            </Button>
           )}
         </Group>
       </Group>
@@ -249,7 +262,7 @@ export function DashboardPage() {
           </Text>
         </Paper>
 
-        {/* Guías GRE & Cuentas Card */}
+        {/* Guías GRE & Cuentas (Superadmin) OR API Keys & Integración (Developer) Card */}
         <Paper
           withBorder
           p="lg"
@@ -258,30 +271,46 @@ export function DashboardPage() {
         >
           <Group justify="space-between" align="flex-start" mb="xs">
             <Text size="xs" fw={700} c="dimmed" tt="uppercase">
-              Guías GRE & Cuentas
+              {isSuperAdmin ? "Guías GRE & Cuentas" : "API Keys & Integración"}
             </Text>
             <Box
               p={8}
               style={{
                 borderRadius: 8,
-                backgroundColor: "var(--mantine-color-violet-0)",
-                color: "var(--mantine-color-violet-7)",
+                backgroundColor: isSuperAdmin
+                  ? "var(--mantine-color-violet-0)"
+                  : "var(--mantine-color-indigo-0)",
+                color: isSuperAdmin
+                  ? "var(--mantine-color-violet-7)"
+                  : "var(--mantine-color-indigo-7)",
               }}
             >
-              <Truck size={20} />
+              {isSuperAdmin ? <Truck size={20} /> : <Key size={20} />}
             </Box>
           </Group>
           <Title order={2} fw={700} c="gray.9">
-            {stats?.despatches.total ?? 0} GRE
+            {isSuperAdmin
+              ? `${stats?.despatches.total ?? 0} GRE`
+              : `${stats?.api_keys?.total ?? 0} Keys`}
           </Title>
           <Group gap="xs" mt="xs">
-            <Group gap={4}>
-              <Users size={14} color="var(--mantine-color-gray-6)" />
-              <Text size="xs" c="dimmed">
-                {stats?.users.total ?? 0} Usuarios (
-                {stats?.users.developers ?? 0} Devs)
-              </Text>
-            </Group>
+            {isSuperAdmin ? (
+              <Group gap={4}>
+                <Users size={14} color="var(--mantine-color-gray-6)" />
+                <Text size="xs" c="dimmed">
+                  {stats?.users.total ?? 0} Usuarios ({stats?.users.developers ?? 0} Devs)
+                </Text>
+              </Group>
+            ) : (
+              <Group gap={4}>
+                <Badge size="xs" color="indigo" variant="light">
+                  {stats?.api_keys?.active ?? 0} Activas
+                </Badge>
+                <Text size="xs" c="dimmed">
+                  • {stats?.despatches.total ?? 0} Guías GRE
+                </Text>
+              </Group>
+            )}
           </Group>
         </Paper>
       </SimpleGrid>
@@ -450,7 +479,9 @@ export function DashboardPage() {
                           RUC: {comp.ruc}
                         </Text>
                         <Text size="xs" c="gray.6" mt={2}>
-                          Dev: {comp.user?.name || "Administrador"}
+                          {isSuperAdmin
+                            ? `Dev: ${comp.user?.name || "Administrador"}`
+                            : `${comp.documents_count ?? 0} comprobantes emitidos`}
                         </Text>
                       </Box>
                       <Badge
