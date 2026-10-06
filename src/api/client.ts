@@ -144,6 +144,15 @@ export const api = {
       );
       return res.data;
     },
+    createTestCompany: async (): Promise<Company> => {
+      const res = await request<{ status: string; message: string; data: Company }>(
+        "/companies/test-company",
+        {
+          method: "POST",
+        },
+      );
+      return res.data;
+    },
     create: async (formData: FormData): Promise<Company> => {
       const res = await request<{ status: string; data: Company }>(
         "/companies",
@@ -321,14 +330,20 @@ export const api = {
       password: string;
       role?: string;
       is_active?: boolean;
-    }): Promise<User> => {
-      const res = await request<{ status: string; data: User }>(
-        "/admin/users",
-        {
-          method: "POST",
-          body: JSON.stringify(userData),
-        },
-      );
+      create_test_company?: boolean;
+    }): Promise<{ user: User; api_key: string; test_company?: Company | null }> => {
+      const res = await request<{
+        status: string;
+        message: string;
+        data: {
+          user: User;
+          api_key: string;
+          test_company?: Company | null;
+        };
+      }>("/admin/users", {
+        method: "POST",
+        body: JSON.stringify(userData),
+      });
       return res.data;
     },
     update: async (

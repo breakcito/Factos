@@ -61,6 +61,7 @@ export function UsersPage() {
       password: "",
       role: "developer",
       is_active: true,
+      create_test_company: true,
     },
     validate: {
       name: (val) =>
@@ -112,15 +113,21 @@ export function UsersPage() {
 
   const handleCreateUser = async (values: typeof createForm.values) => {
     try {
-      await api.users.create(values);
+      const res = await api.users.create(values);
       notifications.show({
         title: "Usuario Creado",
-        message: `Cuenta de desarrollador para ${values.name} creada exitosamente.`,
+        message: `Cuenta de desarrollador para ${values.name} creada exitosamente.${res.test_company ? " Se asoció la empresa de prueba SUNAT Beta." : ""}`,
         color: "teal",
       });
       createForm.reset();
       setCreateModalOpen(false);
       loadUsers();
+
+      if (res.api_key) {
+        setSelectedUser(res.user);
+        setGeneratedToken(res.api_key);
+        setTokenModalOpen(true);
+      }
     } catch (err: any) {
       notifications.show({
         title: "Error al crear",
@@ -440,6 +447,13 @@ export function UsersPage() {
             <Switch
               label="Cuenta Activa"
               {...createForm.getInputProps("is_active", { type: "checkbox" })}
+            />
+
+            <Switch
+              label="Crear Empresa de Prueba SUNAT Beta automáticamente"
+              description="Clona una empresa de prueba con RUC 20000000001 y credenciales MODDATOS para que este usuario pueda testear inmediatamente."
+              color="teal"
+              {...createForm.getInputProps("create_test_company", { type: "checkbox" })}
             />
 
             <Group justify="flex-end" mt="md">

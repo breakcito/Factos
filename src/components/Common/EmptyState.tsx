@@ -8,6 +8,8 @@ interface EmptyStateProps {
   icon?: ReactNode;
   actionText?: string;
   onAction?: () => void;
+  secondaryActionText?: string;
+  onSecondaryAction?: () => void;
 }
 
 export function EmptyState({
@@ -16,13 +18,15 @@ export function EmptyState({
   icon,
   actionText,
   onAction,
+  secondaryActionText,
+  onSecondaryAction,
 }: EmptyStateProps) {
   return (
     <Center py={48}>
       <Stack
         align="center"
         gap="sm"
-        style={{ maxWidth: 400, textAlign: "center" }}
+        style={{ maxWidth: 420, textAlign: "center" }}
       >
         <Box
           p="md"
@@ -42,10 +46,19 @@ export function EmptyState({
             {description}
           </Text>
         )}
-        {actionText && onAction && (
-          <Button size="sm" variant="light" onClick={onAction} mt="xs">
-            {actionText}
-          </Button>
+        {(actionText || secondaryActionText) && (
+          <Box style={{ display: "flex", gap: 10, marginTop: 12 }}>
+            {actionText && onAction && (
+              <Button size="sm" color="teal" onClick={onAction}>
+                {actionText}
+              </Button>
+            )}
+            {secondaryActionText && onSecondaryAction && (
+              <Button size="sm" variant="default" onClick={onSecondaryAction}>
+                {secondaryActionText}
+              </Button>
+            )}
+          </Box>
         )}
       </Stack>
     </Center>

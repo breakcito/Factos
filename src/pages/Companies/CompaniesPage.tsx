@@ -29,6 +29,7 @@ import {
   Building2,
   Edit2,
   Eye,
+  FlaskConical,
   Mail,
   Plus,
   RefreshCw,
@@ -53,6 +54,7 @@ export function CompaniesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [queryingRuc, setQueryingRuc] = useState(false);
+  const [creatingTestCompany, setCreatingTestCompany] = useState(false);
 
   // Modals / Drawer
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -307,6 +309,29 @@ export function CompaniesPage() {
     setDrawerOpen(true);
   };
 
+  const hasTestCompany = companies.some((c) => !c.is_production);
+
+  const handleCreateTestCompany = async () => {
+    setCreatingTestCompany(true);
+    try {
+      const res = await api.companies.createTestCompany();
+      notifications.show({
+        title: "Empresa de Prueba Creada",
+        message: `Empresa ${res.business_name} (RUC: ${res.ruc}) asociada en modo Beta para pruebas con SUNAT.`,
+        color: "teal",
+      });
+      loadData();
+    } catch (err: any) {
+      notifications.show({
+        title: "No se pudo crear la empresa de prueba",
+        message: err.message || "Ocurrió un error al provisionar la empresa.",
+        color: "red",
+      });
+    } finally {
+      setCreatingTestCompany(false);
+    }
+  };
+
   return (
     <Stack gap="xl">
       {/* Top Header Bar */}
@@ -336,6 +361,18 @@ export function CompaniesPage() {
           >
             Actualizar
           </Button>
+          {!hasTestCompany && (
+            <Button
+              leftSection={<FlaskConical size={16} />}
+              variant="light"
+              color="blue"
+              size="sm"
+              loading={creatingTestCompany}
+              onClick={handleCreateTestCompany}
+            >
+              Crear Empresa de Prueba (Beta)
+            </Button>
+          )}
           <Button
             leftSection={<Plus size={16} />}
             color="teal"
@@ -380,10 +417,12 @@ export function CompaniesPage() {
         ) : companies.length === 0 ? (
           <EmptyState
             title="No hay empresas registradas"
-            description="Agregue su primera empresa emisora para comenzar a emitir facturas y boletas."
+            description="Comience creando una empresa de prueba SUNAT Beta automática con un solo clic o registre una empresa manualmente."
             icon={<Building2 size={36} />}
-            actionText="Registrar Empresa"
-            onAction={() => setCreateModalOpen(true)}
+            actionText="Crear Empresa de Prueba (Beta)"
+            onAction={handleCreateTestCompany}
+            secondaryActionText="Registrar Empresa Manual"
+            onSecondaryAction={() => setCreateModalOpen(true)}
           />
         ) : (
           <Table.ScrollContainer minWidth={800}>
