@@ -9,7 +9,9 @@ import {
   Group,
   Loader,
   NumberInput,
+  Paper,
   PasswordInput,
+  SegmentedControl,
   Select,
   Stack,
   Tabs,
@@ -32,6 +34,7 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "../../api/client";
 import type { SystemSettingsData } from "../../api/types";
+import { playNotificationSound } from "../../utils/sound";
 
 export function SettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -45,6 +48,10 @@ export function SettingsPage() {
   const [testError, setTestError] = useState<string | null>(null);
   const [testDniInput, setTestDniInput] = useState("47586940");
   const [testRucInput, setTestRucInput] = useState("20000000001");
+  const [testTcSource, setTestTcSource] = useState<"sunat" | "sbs">("sunat");
+  const [testTcDate, setTestTcDate] = useState<string>(
+    new Date().toISOString().split("T")[0],
+  );
 
   const mailForm = useForm({
     initialValues: {
@@ -198,7 +205,11 @@ export function SettingsPage() {
     setTestError(null);
 
     const query =
-      type === "dni" ? testDniInput : type === "ruc" ? testRucInput : undefined;
+      type === "dni"
+        ? testDniInput
+        : type === "ruc"
+          ? testRucInput
+          : testTcDate || undefined;
     const token =
       type === "tc"
         ? apisForm.values.api_key_tc
@@ -209,15 +220,21 @@ export function SettingsPage() {
         type,
         query,
         token,
+        source: type === "tc" ? testTcSource : undefined,
       });
       setTestResult(res);
+      playNotificationSound("success");
       notifications.show({
         title: "Consulta Exitosa",
-        message: `Servicio ${type.toUpperCase()} respondió correctamente`,
+        message:
+          type === "tc"
+            ? `Tipo de cambio (${testTcSource.toUpperCase()}) consultado con éxito`
+            : `Servicio ${type.toUpperCase()} respondió correctamente`,
         color: "teal",
       });
     } catch (err: any) {
       setTestError(err.message || "Error en la consulta");
+      playNotificationSound("error");
       notifications.show({
         title: "Error en consulta",
         message: err.message,
@@ -557,16 +574,51 @@ export function SettingsPage() {
                   </Group>
 
                   {/* Test Tipo de Cambio */}
-                  <Button
-                    leftSection={<DollarSign size={16} />}
-                    variant="light"
-                    color="violet"
-                    onClick={() => handleRunServiceTest("tc")}
-                    loading={testingService}
-                    fullWidth
+                  <Paper
+                    withBorder
+                    p="xs"
+                    radius="sm"
+                    style={{ backgroundColor: "#fafafa" }}
                   >
-                    Probar Tipo de Cambio Hoy
-                  </Button>
+                    <Stack gap="xs">
+                      <Group justify="space-between" align="center">
+                        <Text size="xs" fw={700} c="dimmed" tt="uppercase">
+                          Tipo de Cambio
+                        </Text>
+                        <SegmentedControl
+                          size="xs"
+                          value={testTcSource}
+                          onChange={(val) =>
+                            setTestTcSource(val as "sunat" | "sbs")
+                          }
+                          data={[
+                            { label: "SUNAT", value: "sunat" },
+                            { label: "SBS", value: "sbs" },
+                          ]}
+                          color="teal"
+                        />
+                      </Group>
+
+                      <Group gap="xs" grow>
+                        <TextInput
+                          type="date"
+                          size="xs"
+                          value={testTcDate}
+                          onChange={(e) => setTestTcDate(e.currentTarget.value)}
+                        />
+                        <Button
+                          leftSection={<DollarSign size={15} />}
+                          variant="light"
+                          color="violet"
+                          size="xs"
+                          onClick={() => handleRunServiceTest("tc")}
+                          loading={testingService}
+                        >
+                          Consultar {testTcSource.toUpperCase()}
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Paper>
 
                   {/* Results box */}
                   {testError && (

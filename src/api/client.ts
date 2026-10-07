@@ -193,6 +193,8 @@ export const api = {
       type_code?: string;
       series?: string;
       status?: string;
+      is_production?: boolean;
+      is_test?: boolean;
       date_from?: string;
       date_to?: string;
       search?: string;
@@ -209,6 +211,10 @@ export const api = {
       if (params?.type_code) query.append("type_code", params.type_code);
       if (params?.series) query.append("series", params.series);
       if (params?.status) query.append("status", params.status);
+      if (params?.is_production !== undefined)
+        query.append("is_production", params.is_production ? "1" : "0");
+      if (params?.is_test !== undefined)
+        query.append("is_test", params.is_test ? "1" : "0");
       if (params?.date_from) query.append("date_from", params.date_from);
       if (params?.date_to) query.append("date_to", params.date_to);
       if (params?.search) query.append("search", params.search);
@@ -252,6 +258,8 @@ export const api = {
       company_id?: string;
       series?: string;
       status?: string;
+      is_production?: boolean;
+      is_test?: boolean;
       date_from?: string;
       date_to?: string;
       search?: string;
@@ -267,6 +275,10 @@ export const api = {
       if (params?.company_id) query.append("company_id", params.company_id);
       if (params?.series) query.append("series", params.series);
       if (params?.status) query.append("status", params.status);
+      if (params?.is_production !== undefined)
+        query.append("is_production", params.is_production ? "1" : "0");
+      if (params?.is_test !== undefined)
+        query.append("is_test", params.is_test ? "1" : "0");
       if (params?.date_from) query.append("date_from", params.date_from);
       if (params?.date_to) query.append("date_to", params.date_to);
       if (params?.search) query.append("search", params.search);
@@ -418,6 +430,7 @@ export const api = {
       type: "dni" | "ruc" | "tc";
       query?: string;
       token?: string;
+      source?: "sunat" | "sbs";
     }): Promise<any> => {
       return request("/admin/settings/test-apisperu", {
         method: "POST",
@@ -434,9 +447,27 @@ export const api = {
     ruc: async (ruc: string) => {
       return request<{ status: string; data: any }>(`/services/ruc/${ruc}`);
     },
-    exchangeRate: async (date?: string) => {
-      return request<{ status: string; data: any }>(
-        `/services/exchange-rate${date ? `?date=${date}` : ""}`,
+    exchangeRate: async (
+      params?: string | { date?: string; source?: "sunat" | "sbs" },
+    ) => {
+      const query = new URLSearchParams();
+      if (typeof params === "string") {
+        query.append("date", params);
+      } else if (params) {
+        if (params.date) query.append("date", params.date);
+        if (params.source) query.append("source", params.source);
+      }
+      return request<{
+        status: string;
+        data: {
+          date: string;
+          source: "SUNAT" | "SBS" | string;
+          currency: string;
+          compra: number;
+          venta: number;
+        };
+      }>(
+        `/services/exchange-rate${query.toString() ? `?${query.toString()}` : ""}`,
       );
     },
   },

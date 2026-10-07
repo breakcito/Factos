@@ -50,6 +50,7 @@ export function DespatchesPage() {
 
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedEnvironment, setSelectedEnvironment] = useState<string>("");
   const [search, setSearch] = useState("");
 
   // Modals & Drawer
@@ -76,6 +77,12 @@ export function DespatchesPage() {
       const res = await api.despatches.getAll({
         company_id: selectedCompanyId || undefined,
         status: selectedStatus || undefined,
+        is_production:
+          selectedEnvironment === "prod"
+            ? true
+            : selectedEnvironment === "beta"
+              ? false
+              : undefined,
         search: search || undefined,
         page,
         per_page: 15,
@@ -102,7 +109,7 @@ export function DespatchesPage() {
 
   useEffect(() => {
     loadDespatches();
-  }, [page, selectedCompanyId, selectedStatus, search]);
+  }, [page, selectedCompanyId, selectedStatus, selectedEnvironment, search]);
 
   const handleOpenDetail = (despatch: Despatch) => {
     setSelectedDespatch(despatch);
@@ -157,7 +164,7 @@ export function DespatchesPage() {
             c="gray.9"
             style={{ letterSpacing: "-0.4px" }}
           >
-            Guías de Remisión Electrónica (GRE)
+            Guías de Remisión Electrónica
           </Title>
           <Text size="sm" c="dimmed">
             Guías de remitente emitidas bajo normativa SUNAT con código QR y
@@ -184,7 +191,7 @@ export function DespatchesPage() {
         style={{ backgroundColor: "#ffffff" }}
       >
         <Grid gap="sm" align="center">
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+          <Grid.Col span={{ base: 12, sm: 3 }}>
             <TextInput
               placeholder="Buscar serie, número, destinatario..."
               leftSection={<Search size={16} />}
@@ -193,7 +200,7 @@ export function DespatchesPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+          <Grid.Col span={{ base: 12, sm: 3 }}>
             <Select
               placeholder="Todas las empresas"
               clearable
@@ -206,7 +213,7 @@ export function DespatchesPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+          <Grid.Col span={{ base: 12, sm: 3 }}>
             <Select
               placeholder="Estado SUNAT"
               clearable
@@ -218,6 +225,19 @@ export function DespatchesPage() {
               ]}
               value={selectedStatus}
               onChange={(val) => setSelectedStatus(val || "")}
+            />
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, sm: 3 }}>
+            <Select
+              placeholder="Entorno"
+              clearable
+              data={[
+                { value: "prod", label: "Producción" },
+                { value: "beta", label: "Beta / Prueba" },
+              ]}
+              value={selectedEnvironment}
+              onChange={(val) => setSelectedEnvironment(val || "")}
             />
           </Grid.Col>
         </Grid>
@@ -270,6 +290,15 @@ export function DespatchesPage() {
                         <Badge size="xs" variant="light" color="violet">
                           GRE
                         </Badge>
+                        {desp.is_production === false ? (
+                          <Badge size="xs" variant="outline" color="orange">
+                            Beta
+                          </Badge>
+                        ) : (
+                          <Badge size="xs" variant="outline" color="green">
+                            Prod
+                          </Badge>
+                        )}
                         <Text
                           size="sm"
                           fw={700}
@@ -425,10 +454,21 @@ export function DespatchesPage() {
           <Stack gap="md" mt="md">
             <Box>
               <Text size="xs" fw={700} c="dimmed" tt="uppercase">
-                Estado SUNAT
+                Estado SUNAT & Entorno
               </Text>
               <Group justify="space-between" mt={4}>
-                <StatusBadge status={selectedDespatch.status} size="lg" />
+                <Group gap={8}>
+                  <StatusBadge status={selectedDespatch.status} size="lg" />
+                  {selectedDespatch.is_production === false ? (
+                    <Badge size="md" variant="outline" color="orange">
+                      Prueba / Beta
+                    </Badge>
+                  ) : (
+                    <Badge size="md" variant="outline" color="green">
+                      Producción
+                    </Badge>
+                  )}
+                </Group>
                 <Badge size="md" color="gray" variant="light">
                   Peso: {selectedDespatch.total_weight}{" "}
                   {selectedDespatch.weight_unit}

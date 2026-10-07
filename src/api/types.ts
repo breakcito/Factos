@@ -100,6 +100,8 @@ export interface Document {
   series: string;
   correlative: string;
   document_number?: string;
+  is_production?: boolean;
+  is_test?: boolean;
   status:
     | "pending"
     | "waiting_sunat"
@@ -168,6 +170,8 @@ export interface Despatch {
   series: string;
   correlative: string;
   document_number?: string;
+  is_production?: boolean;
+  is_test?: boolean;
   status:
     | "pending"
     | "waiting_sunat"

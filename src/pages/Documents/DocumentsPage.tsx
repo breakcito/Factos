@@ -59,6 +59,7 @@ export function DocumentsPage() {
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>("");
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedEnvironment, setSelectedEnvironment] = useState<string>("");
   const [search, setSearch] = useState("");
 
   // Modals & Drawer
@@ -98,6 +99,12 @@ export function DocumentsPage() {
         company_id: selectedCompanyId || undefined,
         type_code: selectedType || undefined,
         status: selectedStatus || undefined,
+        is_production:
+          selectedEnvironment === "prod"
+            ? true
+            : selectedEnvironment === "beta"
+              ? false
+              : undefined,
         search: search || undefined,
         page,
         per_page: 15,
@@ -133,7 +140,7 @@ export function DocumentsPage() {
 
   useEffect(() => {
     loadDocuments();
-  }, [page, selectedCompanyId, selectedType, selectedStatus, search]);
+  }, [page, selectedCompanyId, selectedType, selectedStatus, selectedEnvironment, search]);
 
   // Automatically track any documents in void_pending status
   useEffect(() => {
@@ -339,7 +346,7 @@ export function DocumentsPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 3 }}>
+          <Grid.Col span={{ base: 12, sm: 2.5 }}>
             <Select
               placeholder="Todas las empresas"
               clearable
@@ -352,7 +359,7 @@ export function DocumentsPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 3 }}>
+          <Grid.Col span={{ base: 12, sm: 2.5 }}>
             <Select
               placeholder="Tipo de comprobante"
               clearable
@@ -367,7 +374,7 @@ export function DocumentsPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 3 }}>
+          <Grid.Col span={{ base: 12, sm: 2 }}>
             <Select
               placeholder="Estado SUNAT"
               clearable
@@ -379,6 +386,19 @@ export function DocumentsPage() {
               ]}
               value={selectedStatus}
               onChange={(val) => setSelectedStatus(val || "")}
+            />
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, sm: 2 }}>
+            <Select
+              placeholder="Entorno"
+              clearable
+              data={[
+                { value: "prod", label: "Producción" },
+                { value: "beta", label: "Beta / Prueba" },
+              ]}
+              value={selectedEnvironment}
+              onChange={(val) => setSelectedEnvironment(val || "")}
             />
           </Grid.Col>
         </Grid>
@@ -435,6 +455,15 @@ export function DocumentsPage() {
                         >
                           {getTypeName(doc.type_code)}
                         </Badge>
+                        {doc.is_production === false ? (
+                          <Badge size="xs" variant="outline" color="orange">
+                            Beta
+                          </Badge>
+                        ) : (
+                          <Badge size="xs" variant="outline" color="green">
+                            Prod
+                          </Badge>
+                        )}
                         <Text
                           size="sm"
                           fw={700}
@@ -594,11 +623,20 @@ export function DocumentsPage() {
               <Group justify="space-between" align="center">
                 <Box>
                   <Text size="xs" fw={700} c="dimmed" tt="uppercase">
-                    Estado SUNAT
+                    Estado SUNAT & Entorno
                   </Text>
-                  <Box mt={4}>
+                  <Group gap={8} mt={4}>
                     <StatusBadge status={selectedDoc.status} size="lg" />
-                  </Box>
+                    {selectedDoc.is_production === false ? (
+                      <Badge size="md" variant="outline" color="orange">
+                        Prueba / Beta
+                      </Badge>
+                    ) : (
+                      <Badge size="md" variant="outline" color="green">
+                        Producción
+                      </Badge>
+                    )}
+                  </Group>
                 </Box>
                 <Box ta="right">
                   <Text size="xs" fw={700} c="dimmed" tt="uppercase">
