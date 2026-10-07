@@ -76,14 +76,16 @@ export interface Company {
 
 export interface DocumentItem {
   id: number;
-  item_index: number;
+  item_index?: number;
+  internal_code?: string | null;
   code?: string | null;
   description: string;
   unit_code: string;
-  quantity: number;
-  unit_value: number;
-  unit_price: number;
-  igv_affectation_type: string;
+  quantity: number | string;
+  unit_value: number | string;
+  unit_price: number | string;
+  igv_type?: string;
+  igv_affectation_type?: string;
   igv_amount: number | string;
   total: number | string;
 }
@@ -93,6 +95,8 @@ export interface Document {
   company_id: string;
   external_id?: string | null;
   type_code: string;
+  document_type?: string;
+  operation_type?: string;
   series: string;
   correlative: string;
   document_number?: string;
@@ -106,7 +110,15 @@ export interface Document {
     | "void_pending";
   issue_date: string;
   issue_time: string;
+  due_date?: string | null;
   currency: string;
+  payment_method?: string;
+  total_taxable?: number | string;
+  total_unaffected?: number | string;
+  total_exonerated?: number | string;
+  total_free?: number | string;
+  total_igv?: number | string;
+  total_discount?: number | string;
   total: number | string;
   client_doc_type: string;
   client_doc_number: string;
@@ -124,6 +136,15 @@ export interface Document {
   xml_path?: string | null;
   cdr_path?: string | null;
   pdf_path?: string | null;
+  void_xml_path?: string | null;
+  void_cdr_path?: string | null;
+  links?: {
+    xml?: string | null;
+    cdr?: string | null;
+    pdf?: string | null;
+    void_xml?: string | null;
+    void_cdr?: string | null;
+  };
   created_at: string;
   updated_at: string;
   company?: Company;

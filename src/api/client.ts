@@ -242,6 +242,8 @@ export const api = {
     getXmlUrl: (id: string) => `${API_BASE}/documents/${id}/xml`,
     getCdrUrl: (id: string) => `${API_BASE}/documents/${id}/cdr`,
     getPdfUrl: (id: string) => `${API_BASE}/documents/${id}/pdf`,
+    getVoidXmlUrl: (id: string) => `${API_BASE}/documents/${id}/void-xml`,
+    getVoidCdrUrl: (id: string) => `${API_BASE}/documents/${id}/void-cdr`,
   },
 
   // Despatches (GRE)
