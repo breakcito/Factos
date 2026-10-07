@@ -72,8 +72,13 @@ export function DashboardPage() {
     );
   }
 
-  const formatCurrency = (val: number, currency: string) => {
-    return `${currency === "USD" ? "$" : "S/"} ${val.toLocaleString("es-PE", {
+  const formatCurrency = (
+    val: number | string | null | undefined,
+    currency: string = "PEN",
+  ) => {
+    const num = typeof val === "number" ? val : parseFloat(String(val || 0));
+    const safeNum = isNaN(num) ? 0 : num;
+    return `${currency === "USD" ? "$" : "S/"} ${safeNum.toLocaleString("es-PE", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;

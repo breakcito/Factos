@@ -84,8 +84,8 @@ export interface DocumentItem {
   unit_value: number;
   unit_price: number;
   igv_affectation_type: string;
-  igv_amount: number;
-  total: number;
+  igv_amount: number | string;
+  total: number | string;
 }
 
 export interface Document {
@@ -107,7 +107,7 @@ export interface Document {
   issue_date: string;
   issue_time: string;
   currency: string;
-  total: number;
+  total: number | string;
   client_doc_type: string;
   client_doc_number: string;
   client_name: string;

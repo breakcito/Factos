@@ -61,6 +61,18 @@ export function DocumentsPage() {
   const [voidReason, setVoidReason] = useState("");
   const [voiding, setVoiding] = useState(false);
 
+  const formatCurrency = (
+    val: number | string | null | undefined,
+    currency: string = "PEN",
+  ) => {
+    const num = typeof val === "number" ? val : parseFloat(String(val || 0));
+    const safeNum = isNaN(num) ? 0 : num;
+    return `${currency === "USD" ? "$" : "S/"} ${safeNum.toLocaleString("es-PE", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
   const loadCompanies = async () => {
     try {
       const data = await api.companies.getAll();
@@ -356,8 +368,7 @@ export function DocumentsPage() {
                     </Table.Td>
                     <Table.Td>
                       <Text size="sm" fw={700}>
-                        {doc.currency === "USD" ? "$" : "S/"}{" "}
-                        {doc.total.toFixed(2)}
+                        {formatCurrency(doc.total, doc.currency)}
                       </Text>
                     </Table.Td>
                     <Table.Td>
@@ -472,8 +483,7 @@ export function DocumentsPage() {
               <Group justify="space-between" mt={4}>
                 <StatusBadge status={selectedDoc.status} size="lg" />
                 <Text size="lg" fw={800}>
-                  {selectedDoc.currency === "USD" ? "$" : "S/"}{" "}
-                  {selectedDoc.total.toFixed(2)}
+                  {formatCurrency(selectedDoc.total, selectedDoc.currency)}
                 </Text>
               </Group>
               {selectedDoc.sunat_description && (
