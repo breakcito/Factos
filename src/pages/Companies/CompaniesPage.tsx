@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Card,
+  CopyButton,
   Divider,
   Drawer,
   FileInput,
@@ -27,6 +28,8 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
   Building2,
+  Check,
+  Copy,
   Edit2,
   Eye,
   FlaskConical,
@@ -425,51 +428,103 @@ export function CompaniesPage() {
             onSecondaryAction={() => setCreateModalOpen(true)}
           />
         ) : (
-          <Table.ScrollContainer minWidth={800}>
-            <Table verticalSpacing="md" highlightOnHover>
+          <Table.ScrollContainer minWidth={1000}>
+            <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>RUC & Razón Social</Table.Th>
-                  <Table.Th>Desarrollador</Table.Th>
-                  <Table.Th>Ambiente SUNAT</Table.Th>
-                  <Table.Th>Certificado</Table.Th>
-                  <Table.Th>Comprobantes</Table.Th>
-                  <Table.Th>Estado</Table.Th>
-                  <Table.Th style={{ textAlign: "right" }}>Acciones</Table.Th>
+                  <Table.Th w={120} style={{ textAlign: "center" }}>
+                    ID
+                  </Table.Th>
+                  <Table.Th w={220} style={{ textAlign: "center" }}>
+                    RUC & Razón Social
+                  </Table.Th>
+                  <Table.Th w={100} style={{ textAlign: "center" }}>
+                    Desarrollador
+                  </Table.Th>
+                  <Table.Th w={140} style={{ textAlign: "center" }}>
+                    Ambiente SUNAT
+                  </Table.Th>
+                  <Table.Th w={120} style={{ textAlign: "center" }}>
+                    Certificado
+                  </Table.Th>
+                  <Table.Th w={130} style={{ textAlign: "center" }}>
+                    Comprobantes
+                  </Table.Th>
+                  <Table.Th w={100} style={{ textAlign: "center" }}>
+                    Estado
+                  </Table.Th>
+                  <Table.Th w={100} style={{ textAlign: "center" }}>
+                    Acciones
+                  </Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
                 {companies.map((comp) => (
                   <Table.Tr key={comp.id}>
-                    <Table.Td>
-                      <Text size="sm" fw={700} c="gray.9">
-                        {comp.business_name}
-                      </Text>
-                      <Group gap={6}>
-                        <Text
-                          size="xs"
-                          fw={600}
-                          style={{ fontFamily: "monospace" }}
-                          c="dimmed"
-                        >
-                          {comp.ruc}
-                        </Text>
-                        {comp.trademark_name && (
-                          <Badge size="xs" variant="outline" color="gray">
-                            {comp.trademark_name}
-                          </Badge>
-                        )}
+                    {/* ID */}
+                    <Table.Td style={{ textAlign: "center" }}>
+                      <Group justify="center" gap={4} wrap="nowrap">
+                        <Badge variant="light" color="gray" size="sm">
+                          {comp.id}
+                        </Badge>
+                        <CopyButton value={String(comp.id)} timeout={2000}>
+                          {({ copied, copy }) => (
+                            <Tooltip
+                              label={copied ? "Copiado" : "Copiar ID"}
+                              withArrow
+                              position="top"
+                            >
+                              <ActionIcon
+                                color={copied ? "teal" : "gray"}
+                                variant="subtle"
+                                size="sm"
+                                onClick={copy}
+                                aria-label="Copiar ID"
+                              >
+                                {copied ? (
+                                  <Check size={14} />
+                                ) : (
+                                  <Copy size={14} />
+                                )}
+                              </ActionIcon>
+                            </Tooltip>
+                          )}
+                        </CopyButton>
                       </Group>
                     </Table.Td>
-                    <Table.Td>
-                      <Text size="xs" fw={600}>
+
+                    {/* RUC & Razón Social */}
+                    <Table.Td style={{ textAlign: "center" }}>
+                      <Text size="sm" fw={700} c="gray.9" lineClamp={1}>
+                        {comp.business_name}
+                      </Text>
+                      <Text
+                        size="xs"
+                        fw={600}
+                        style={{ fontFamily: "monospace" }}
+                        c="dimmed"
+                      >
+                        {comp.ruc}
+                      </Text>
+                      {comp.trademark_name && (
+                        <Badge size="xs" variant="outline" color="gray">
+                          {comp.trademark_name}
+                        </Badge>
+                      )}
+                    </Table.Td>
+
+                    {/* Desarrollador */}
+                    <Table.Td style={{ textAlign: "center" }}>
+                      <Text size="xs" fw={600} truncate>
                         {comp.user?.name || "Administrador"}
                       </Text>
-                      <Text size="11px" c="dimmed">
+                      <Text size="11px" c="dimmed" truncate>
                         {comp.user?.email}
                       </Text>
                     </Table.Td>
-                    <Table.Td>
+
+                    {/* Ambiente SUNAT */}
+                    <Table.Td style={{ textAlign: "center" }}>
                       <Badge
                         variant="filled"
                         color={comp.is_production ? "blue" : "yellow"}
@@ -478,8 +533,10 @@ export function CompaniesPage() {
                         {comp.is_production ? "Producción" : "Beta / Pruebas"}
                       </Badge>
                     </Table.Td>
-                    <Table.Td>
-                      <Group gap={4}>
+
+                    {/* Certificado */}
+                    <Table.Td style={{ textAlign: "center" }}>
+                      <Group gap={4} wrap="nowrap" justify="center">
                         <Shield
                           size={14}
                           color={
@@ -497,19 +554,25 @@ export function CompaniesPage() {
                         </Text>
                       </Group>
                     </Table.Td>
-                    <Table.Td>
+
+                    {/* Comprobantes */}
+                    <Table.Td style={{ textAlign: "center" }}>
                       <Badge variant="light" color="teal" size="sm">
                         {comp.documents_count ?? 0} emitidos
                       </Badge>
                     </Table.Td>
-                    <Table.Td>
+
+                    {/* Estado */}
+                    <Table.Td style={{ textAlign: "center" }}>
                       <StatusBadge
                         status={comp.is_active ? "active" : "inactive"}
                       />
                     </Table.Td>
-                    <Table.Td style={{ textAlign: "right" }}>
-                      <Group gap={6} justify="flex-end">
-                        <Tooltip label="Ver Detalle Completo">
+
+                    {/* Acciones */}
+                    <Table.Td style={{ textAlign: "center" }}>
+                      <Group gap={4} justify="center" wrap="nowrap">
+                        <Tooltip label="Ver Detalle Completo" withArrow>
                           <ActionIcon
                             variant="light"
                             color="teal"
@@ -520,7 +583,7 @@ export function CompaniesPage() {
                           </ActionIcon>
                         </Tooltip>
 
-                        <Tooltip label="Editar Empresa">
+                        <Tooltip label="Editar Empresa" withArrow>
                           <ActionIcon
                             variant="light"
                             color="blue"
@@ -531,7 +594,7 @@ export function CompaniesPage() {
                           </ActionIcon>
                         </Tooltip>
 
-                        <Tooltip label="Eliminar Empresa">
+                        <Tooltip label="Eliminar Empresa" withArrow>
                           <ActionIcon
                             variant="light"
                             color="red"
