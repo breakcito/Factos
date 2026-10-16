@@ -472,7 +472,7 @@ export function DocumentsPage() {
                           {doc.series}-{doc.correlative}
                         </Text>
                         {doc.external_id && (
-                          <Tooltip label={`ID en sistema origen (Hania): #${doc.external_id}`}>
+                          <Tooltip label={`ID en sistema origen: #${doc.external_id}`}>
                             <Badge size="xs" variant="light" color="violet">
                               Ext: #{doc.external_id}
                             </Badge>
