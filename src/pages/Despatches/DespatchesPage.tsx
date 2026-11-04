@@ -218,9 +218,11 @@ export function DespatchesPage() {
               placeholder="Estado SUNAT"
               clearable
               data={[
-                { value: "accepted", label: "Aceptado" },
-                { value: "pending", label: "En Proceso" },
-                { value: "rejected", label: "Rechazado" },
+                { value: "accepted", label: "Aceptado SUNAT" },
+                { value: "pending", label: "Pendiente de envío" },
+                { value: "processing", label: "Enviando / En Proceso" },
+                { value: "rejected", label: "Rechazado SUNAT" },
+                { value: "error", label: "Error de envío" },
                 { value: "voided", label: "Anulado" },
               ]}
               value={selectedStatus}

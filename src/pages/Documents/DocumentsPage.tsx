@@ -379,9 +379,11 @@ export function DocumentsPage() {
               placeholder="Estado SUNAT"
               clearable
               data={[
-                { value: "accepted", label: "Aceptado" },
-                { value: "pending", label: "En Proceso" },
-                { value: "rejected", label: "Rechazado" },
+                { value: "accepted", label: "Aceptado SUNAT" },
+                { value: "pending", label: "Pendiente de envío" },
+                { value: "processing", label: "Enviando / En Proceso" },
+                { value: "rejected", label: "Rechazado SUNAT" },
+                { value: "error", label: "Error de envío" },
                 { value: "voided", label: "Anulado" },
               ]}
               value={selectedStatus}
@@ -570,7 +572,7 @@ export function DocumentsPage() {
                         </Tooltip>
 
                         {doc.status === "accepted" && (
-                          <Tooltip label="Anular Comprobante">
+                          <Tooltip label="Dar de Baja">
                             <ActionIcon
                               variant="light"
                               color="red"

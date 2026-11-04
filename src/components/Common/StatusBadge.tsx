@@ -33,10 +33,22 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
       );
     case "waiting_sunat":
     case "processing":
+    case "sending":
+      return (
+        <Badge color="blue" variant="light" size={size}>
+          Enviando / En Proceso
+        </Badge>
+      );
     case "pending":
       return (
         <Badge color="yellow" variant="light" size={size}>
-          En Proceso
+          Pendiente de envío
+        </Badge>
+      );
+    case "error":
+      return (
+        <Badge color="orange" variant="light" size={size}>
+          Error de envío
         </Badge>
       );
     case "production":
