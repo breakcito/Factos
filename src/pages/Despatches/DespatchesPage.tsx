@@ -196,7 +196,7 @@ export function DespatchesPage() {
               placeholder="Buscar serie, número, destinatario..."
               leftSection={<Search size={16} />}
               value={search}
-              onChange={(e) => setSearch(e.currentTarget.value)}
+              onChange={(e) => setSearch(e.currentTarget.value.toUpperCase())}
             />
           </Grid.Col>
 

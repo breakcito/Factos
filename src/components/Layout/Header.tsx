@@ -176,7 +176,7 @@ export function Header() {
               type="date"
               size="xs"
               value={tcDate}
-              onChange={(e) => handleDateChange(e.currentTarget.value)}
+              onChange={(e) => handleDateChange(e.currentTarget.value.toUpperCase())}
             />
             <Button
               leftSection={<RefreshCw size={14} />}

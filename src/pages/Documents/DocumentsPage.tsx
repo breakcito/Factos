@@ -342,7 +342,7 @@ export function DocumentsPage() {
               placeholder="Buscar serie, correlativo, cliente..."
               leftSection={<Search size={16} />}
               value={search}
-              onChange={(e) => setSearch(e.currentTarget.value)}
+              onChange={(e) => setSearch(e.currentTarget.value.toUpperCase())}
             />
           </Grid.Col>
 
@@ -474,7 +474,9 @@ export function DocumentsPage() {
                           {doc.series}-{doc.correlative}
                         </Text>
                         {doc.external_id && (
-                          <Tooltip label={`ID en sistema origen: #${doc.external_id}`}>
+                          <Tooltip
+                            label={`ID en sistema origen: #${doc.external_id}`}
+                          >
                             <Badge size="xs" variant="light" color="violet">
                               Ext: #{doc.external_id}
                             </Badge>
@@ -682,7 +684,9 @@ export function DocumentsPage() {
                   </Text>
                 </Group>
                 <Text size="xs" c="yellow.9" mt={4}>
-                  Se envió la comunicación de baja. El facturador está consultando el estado automáticamente y te notificará con sonido apenas SUNAT confirme.
+                  Se envió la comunicación de baja. El facturador está
+                  consultando el estado automáticamente y te notificará con
+                  sonido apenas SUNAT confirme.
                 </Text>
                 {selectedDoc.void_reason && (
                   <Text size="xs" c="dimmed" mt={4}>
@@ -690,7 +694,12 @@ export function DocumentsPage() {
                   </Text>
                 )}
                 {selectedDoc.void_ticket && (
-                  <Text size="xs" c="dimmed" mt={2} style={{ fontFamily: "monospace" }}>
+                  <Text
+                    size="xs"
+                    c="dimmed"
+                    mt={2}
+                    style={{ fontFamily: "monospace" }}
+                  >
                     <b>Ticket de baja:</b> {selectedDoc.void_ticket}
                   </Text>
                 )}
@@ -727,13 +736,19 @@ export function DocumentsPage() {
                   </Text>
                 )}
                 {selectedDoc.void_ticket && (
-                  <Text size="xs" c="gray.7" mt={2} style={{ fontFamily: "monospace" }}>
+                  <Text
+                    size="xs"
+                    c="gray.7"
+                    mt={2}
+                    style={{ fontFamily: "monospace" }}
+                  >
                     <b>Ticket SUNAT:</b> {selectedDoc.void_ticket}
                   </Text>
                 )}
                 {selectedDoc.void_sunat_description && (
                   <Text size="xs" c="gray.7" mt={2}>
-                    <b>Respuesta de baja:</b> {selectedDoc.void_sunat_description}
+                    <b>Respuesta de baja:</b>{" "}
+                    {selectedDoc.void_sunat_description}
                   </Text>
                 )}
               </Paper>
@@ -750,9 +765,14 @@ export function DocumentsPage() {
                     </Text>
                   </Group>
                   <Text size="xs" fw={600} truncate>
-                    {selectedDoc.company?.business_name || selectedDoc.company_id}
+                    {selectedDoc.company?.business_name ||
+                      selectedDoc.company_id}
                   </Text>
-                  <Text size="xs" c="dimmed" style={{ fontFamily: "monospace" }}>
+                  <Text
+                    size="xs"
+                    c="dimmed"
+                    style={{ fontFamily: "monospace" }}
+                  >
                     RUC: {selectedDoc.company?.ruc || "-"}
                   </Text>
                   <Text size="11px" c="dimmed" mt={4}>
@@ -772,8 +792,13 @@ export function DocumentsPage() {
                   <Text size="xs" fw={600} truncate>
                     {selectedDoc.client_name}
                   </Text>
-                  <Text size="xs" c="dimmed" style={{ fontFamily: "monospace" }}>
-                    Doc: {selectedDoc.client_doc_number} ({selectedDoc.client_doc_type})
+                  <Text
+                    size="xs"
+                    c="dimmed"
+                    style={{ fontFamily: "monospace" }}
+                  >
+                    Doc: {selectedDoc.client_doc_number} (
+                    {selectedDoc.client_doc_type})
                   </Text>
                   {selectedDoc.client_address && (
                     <Text size="11px" c="dimmed" truncate mt={4}>
@@ -814,14 +839,29 @@ export function DocumentsPage() {
                 </Box>
               ) : selectedDoc.items && selectedDoc.items.length > 0 ? (
                 <Table.ScrollContainer minWidth={500}>
-                  <Table verticalSpacing="xs" striped highlightOnHover withTableBorder>
+                  <Table
+                    verticalSpacing="xs"
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                  >
                     <Table.Thead>
-                      <Table.Tr style={{ backgroundColor: "var(--mantine-color-gray-0)" }}>
+                      <Table.Tr
+                        style={{
+                          backgroundColor: "var(--mantine-color-gray-0)",
+                        }}
+                      >
                         <Table.Th style={{ width: 36 }}>#</Table.Th>
                         <Table.Th>Descripción</Table.Th>
-                        <Table.Th style={{ textAlign: "right", width: 80 }}>Cant.</Table.Th>
-                        <Table.Th style={{ textAlign: "right", width: 90 }}>P. Unit.</Table.Th>
-                        <Table.Th style={{ textAlign: "right", width: 95 }}>Total</Table.Th>
+                        <Table.Th style={{ textAlign: "right", width: 80 }}>
+                          Cant.
+                        </Table.Th>
+                        <Table.Th style={{ textAlign: "right", width: 90 }}>
+                          P. Unit.
+                        </Table.Th>
+                        <Table.Th style={{ textAlign: "right", width: 95 }}>
+                          Total
+                        </Table.Th>
                       </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
@@ -837,7 +877,11 @@ export function DocumentsPage() {
                               {item.description}
                             </Text>
                             {(item.internal_code || item.code) && (
-                              <Text size="10px" c="dimmed" style={{ fontFamily: "monospace" }}>
+                              <Text
+                                size="10px"
+                                c="dimmed"
+                                style={{ fontFamily: "monospace" }}
+                              >
                                 Cód: {item.internal_code || item.code}
                               </Text>
                             )}
@@ -849,7 +893,10 @@ export function DocumentsPage() {
                           </Table.Td>
                           <Table.Td style={{ textAlign: "right" }}>
                             <Text size="xs">
-                              {formatCurrency(item.unit_price, selectedDoc.currency)}
+                              {formatCurrency(
+                                item.unit_price,
+                                selectedDoc.currency,
+                              )}
                             </Text>
                           </Table.Td>
                           <Table.Td style={{ textAlign: "right" }}>
@@ -872,7 +919,12 @@ export function DocumentsPage() {
             </Box>
 
             {/* Financial Summary */}
-            <Paper withBorder p="sm" radius="md" style={{ backgroundColor: "#fafafa" }}>
+            <Paper
+              withBorder
+              p="sm"
+              radius="md"
+              style={{ backgroundColor: "#fafafa" }}
+            >
               <Stack gap={6}>
                 {selectedDoc.total_taxable !== undefined && (
                   <Group justify="space-between">
@@ -880,7 +932,10 @@ export function DocumentsPage() {
                       Operaciones Gravadas:
                     </Text>
                     <Text size="xs" fw={600}>
-                      {formatCurrency(selectedDoc.total_taxable, selectedDoc.currency)}
+                      {formatCurrency(
+                        selectedDoc.total_taxable,
+                        selectedDoc.currency,
+                      )}
                     </Text>
                   </Group>
                 )}
@@ -890,7 +945,10 @@ export function DocumentsPage() {
                       IGV (18%):
                     </Text>
                     <Text size="xs" fw={600}>
-                      {formatCurrency(selectedDoc.total_igv, selectedDoc.currency)}
+                      {formatCurrency(
+                        selectedDoc.total_igv,
+                        selectedDoc.currency,
+                      )}
                     </Text>
                   </Group>
                 )}

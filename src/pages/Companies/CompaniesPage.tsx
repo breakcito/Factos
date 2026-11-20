@@ -404,7 +404,7 @@ export function CompaniesPage() {
             placeholder="Buscar por RUC o Razón Social..."
             leftSection={<Search size={16} />}
             value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.currentTarget.value.toUpperCase())}
             style={{ width: 340 }}
           />
 

@@ -239,7 +239,7 @@ export function ApiKeysPage() {
             placeholder="Buscar por nombre de integración..."
             leftSection={<Search size={16} />}
             value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.currentTarget.value.toUpperCase())}
             style={{ width: 340 }}
           />
 
